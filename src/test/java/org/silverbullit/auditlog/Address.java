@@ -1,5 +1,8 @@
 package org.silverbullit.auditlog;
 
+import javax.persistence.Entity;
+
+@Entity
 public class Address extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;

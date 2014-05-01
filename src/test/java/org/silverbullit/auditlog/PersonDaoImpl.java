@@ -1,5 +1,7 @@
 package org.silverbullit.auditlog;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -13,12 +15,19 @@ public class PersonDaoImpl implements PersonDao {
 	
 	@Override
 	public void persist(Person person) {
-		person.onPostPersist();
+		entityManager.persist(person);
+		entityManager.flush();
 	}
 	
 	@Override
 	public void update(Person person) {
-		person.onPreUpdate();;
+		entityManager.persist(person);
+		entityManager.flush();
+	}
+
+	@Override
+	public List<Person> findAll() {
+		return entityManager.createQuery("SELECT p FROM Person p", Person.class).getResultList();
 	}
 
 }

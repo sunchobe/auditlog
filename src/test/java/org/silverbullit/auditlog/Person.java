@@ -1,15 +1,23 @@
 package org.silverbullit.auditlog;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
+
+@Entity(name="Person")
 public class Person extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
+	@Column
 	@Auditable
 	private String firstname;
 	
+	@Column
 	@Auditable
 	private String lastname;
 	
+	@Transient
 	@Auditable
 	private Address address;
 
