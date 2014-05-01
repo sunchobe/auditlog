@@ -2,6 +2,8 @@ package org.silverbullit.auditlog;
 
 public class Person extends AuditableEntity {
 
+	private static final long serialVersionUID = 1L;
+
 	@Auditable
 	private String firstname;
 	

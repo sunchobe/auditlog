@@ -2,6 +2,8 @@ package org.silverbullit.auditlog;
 
 public class Address extends AuditableEntity {
 
+	private static final long serialVersionUID = 1L;
+
 	@Auditable
 	private String street;
 	
