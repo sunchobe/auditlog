@@ -21,7 +21,7 @@ public class AuditionTransactionHandler {
 		List<Field> fields = getAllFields(new ArrayList<Field>(),
 				auditableEntity.getClass());
 		for (Field field : fields) {
-			for (Annotation annotation : field.getAnnotations()) {
+			for (Annotation annotation : field.getDeclaredAnnotations()) {
 				logger.info("##### annotation: {}", annotation.annotationType());
 			}
 			logger.info("fieldname: {}", field.getName());

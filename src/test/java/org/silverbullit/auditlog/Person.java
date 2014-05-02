@@ -10,8 +10,8 @@ public class Person extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column
 	@Auditable
+	@Column
 	private String firstname;
 
 	@Column
