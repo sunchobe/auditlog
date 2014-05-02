@@ -1,10 +1,11 @@
 package org.silverbullit.auditlog;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
+import javax.persistence.OneToOne;
 
-@Entity(name="Person")
+@Entity(name = "Person")
 public class Person extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
@@ -12,13 +13,13 @@ public class Person extends AuditableEntity {
 	@Column
 	@Auditable
 	private String firstname;
-	
+
 	@Column
 	@Auditable
 	private String lastname;
-	
-	@Transient
+
 	@Auditable
+	@OneToOne(cascade = { CascadeType.ALL })
 	private Address address;
 
 	public String getFirstname() {
@@ -43,5 +44,9 @@ public class Person extends AuditableEntity {
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	public long getId() {
+		return id;
 	}
 }

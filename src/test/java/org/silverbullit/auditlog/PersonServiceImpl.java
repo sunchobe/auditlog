@@ -34,4 +34,10 @@ public class PersonServiceImpl implements PersonService {
 		return personDao.findAll();
 	}
 
+	@Override
+	@Transactional
+	public Person find(long id) {
+		return personDao.find(id);
+	}
+
 }

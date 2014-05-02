@@ -9,5 +9,7 @@ public interface PersonService {
 	void store(Person person);
 
 	List<Person> findAll();
+
+	Person find(long id);
 	
 }

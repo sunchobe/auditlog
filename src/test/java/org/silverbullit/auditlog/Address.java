@@ -1,5 +1,6 @@
 package org.silverbullit.auditlog;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
@@ -7,15 +8,19 @@ public class Address extends AuditableEntity {
 
 	private static final long serialVersionUID = 1L;
 
+	@Column
 	@Auditable
 	private String street;
 	
+	@Column
 	@Auditable
 	private Integer zip;
 	
+	@Column
 	@Auditable
 	private String city;
 	
+	@Column
 	@Auditable
 	private String country;
 

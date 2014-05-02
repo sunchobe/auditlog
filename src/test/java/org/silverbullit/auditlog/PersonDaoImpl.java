@@ -29,5 +29,10 @@ public class PersonDaoImpl implements PersonDao {
 	public List<Person> findAll() {
 		return entityManager.createQuery("SELECT p FROM Person p", Person.class).getResultList();
 	}
+	
+	@Override
+	public Person find(long id) {
+		return entityManager.find(Person.class, id);
+	}
 
 }

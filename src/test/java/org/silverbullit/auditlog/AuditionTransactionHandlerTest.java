@@ -36,6 +36,7 @@ public class AuditionTransactionHandlerTest {
 		personService.store(person);
 
 		person = personService.findAll().get(0);
+		person = personService.find(person.getId());
 
 		personService.updateName(person, "new firstname", "new lastname");
 	}

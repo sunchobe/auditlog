@@ -9,5 +9,7 @@ public interface PersonDao {
 	void update(Person person);
 
 	List<Person> findAll();
+
+	Person find(long id);
 	
 }

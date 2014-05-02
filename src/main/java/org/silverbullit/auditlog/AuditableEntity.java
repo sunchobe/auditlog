@@ -11,15 +11,19 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Version;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @MappedSuperclass
 public abstract class AuditableEntity implements Serializable {
 
+	private static final Logger logger = LogManager.getLogger(AuditableEntity.class);
+	
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue
-	private long id;
+	protected long id;
 
 	@Version
 	private long version;
@@ -28,19 +32,19 @@ public abstract class AuditableEntity implements Serializable {
 
 	@PostLoad
 	public void onPostLoad() {
-		System.out.println("postload");
+		logger.debug("postload");
 		savedEntity = SerializationUtils.clone(this);
 	}
 
 	@PreUpdate
 	public void onPreUpdate() {
-		System.out.println("preupdate");
+		logger.debug("preupdate");
 		AuditionTransactionHandler.detectChanges(savedEntity, this);
 	}
 
 	@PostPersist
 	public void onPostPersist() {
-		System.out.println("postpersist");
+		logger.debug("postpersist");
 		AuditionTransactionHandler.detectNew(this);
 	}
 
