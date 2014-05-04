@@ -18,20 +18,14 @@ public class AuditionTransactionHandler {
 
 	public static void detectChanges(AuditableEntity savedEntity,
 			AuditableEntity auditableEntity) {
-		List<Field> fields = getAllFields(new ArrayList<Field>(),
-				auditableEntity.getClass());
+		List<Field> fields = getAllFields(new ArrayList<Field>(), auditableEntity.getClass());
 		for (Field field : fields) {
-			for (Annotation annotation : field.getDeclaredAnnotations()) {
-				logger.info("##### annotation: {}", annotation.annotationType());
-			}
-			logger.info("fieldname: {}", field.getName());
 			if (field.isAnnotationPresent(Auditable.class)) {
 				try {
 					if (field.getModifiers() == Modifier.PRIVATE) {
 						field.setAccessible(true);
 					}
-					logger.info("fieldname: {}, fieldvalue: {}",
-							field.getName(), field.get(auditableEntity));
+					logger.info("fieldname: {}, fieldvalue: {}", field.getName(), field.get(auditableEntity));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
+import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Version;
 
@@ -41,7 +43,17 @@ public abstract class AuditableEntity implements Serializable {
 		logger.debug("preupdate");
 		AuditionTransactionHandler.detectChanges(savedEntity, this);
 	}
+	
+	@PostUpdate
+	public void onPostUpdate() {
+		logger.debug("postupdate");
+	}
 
+	@PrePersist
+	public void onPrePersist() {
+		logger.debug("prepersist");
+	}
+	
 	@PostPersist
 	public void onPostPersist() {
 		logger.debug("postpersist");
