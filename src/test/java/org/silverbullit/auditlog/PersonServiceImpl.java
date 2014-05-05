@@ -26,6 +26,7 @@ public class PersonServiceImpl implements PersonService {
 	}
 
 	@Transactional
+	@AuditionTransaction
 	@Override
 	public void store(final Person person) {
 		this.personDao.persist(person);

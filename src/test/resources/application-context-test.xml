@@ -13,10 +13,9 @@
            http://www.springframework.org/schema/aop 
            http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
 
-    <tx:annotation-driven />
+    <tx:annotation-driven/>
 	<context:annotation-config />
 	<context:component-scan base-package="org.silverbullit.auditlog" />
-	<aop:aspectj-autoproxy/>
 	
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager" />
 
@@ -32,4 +31,8 @@
         </property>
     </bean>
  
+	<aop:aspectj-autoproxy/>
+	
+	<bean id="auditAspect" class="org.silverbullit.auditlog.AuditionTransactionHandler" />
+	
 </beans>

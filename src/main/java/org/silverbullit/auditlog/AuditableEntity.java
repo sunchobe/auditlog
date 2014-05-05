@@ -46,12 +46,12 @@ public abstract class AuditableEntity implements Serializable {
 	@Transient
 	private AuditableEntity savedEntity;
 
-	public DifferenceSet<String> detectChanges() {
+	public DifferenceList<String> detectChanges() {
 		DifferenceType differenceType = DifferenceType.CREATION;
 		if (this.savedEntity != null) {
 			differenceType = DifferenceType.UPDATE;
 		}
-		final DifferenceSet<String> differenceSet = new DifferenceSet<String>(differenceType, this.getClass().getSimpleName());
+		final DifferenceList<String> differenceSet = new DifferenceList<String>(differenceType, this.getClass().getSimpleName());
 		final List<Field> fields = getAllFields(new ArrayList<Field>(), this.getClass());
 		for (final Field field : fields) {
 			if (field.isAnnotationPresent(Auditable.class)) {
@@ -87,7 +87,7 @@ public abstract class AuditableEntity implements Serializable {
 
 	@PostPersist
 	public void onPostPersist() {
-		AuditionTransactionHandler.handleDetectedCreation(this);
+		AuditionTransactionHandler.detectAndRecordChanges(this);
 	}
 
 	@PostUpdate
@@ -102,6 +102,6 @@ public abstract class AuditableEntity implements Serializable {
 
 	@PreUpdate
 	public void onPreUpdate() {
-		AuditionTransactionHandler.handleDetectedChanges(this);
+		AuditionTransactionHandler.detectAndRecordChanges(this);
 	}
 }
