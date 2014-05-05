@@ -1,6 +1,10 @@
 package org.silverbullit.auditlog;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,15 +18,23 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang3.SerializationUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @MappedSuperclass
 public abstract class AuditableEntity implements Serializable {
 
-	private static final Logger logger = LogManager.getLogger(AuditableEntity.class);
-	
 	private static final long serialVersionUID = 1L;
+
+	private static List<Field> getAllFields(List<Field> fields, final Class<?> type) {
+		for (final Field field : type.getDeclaredFields()) {
+			fields.add(field);
+		}
+
+		if (type.getSuperclass() != null) {
+			fields = getAllFields(fields, type.getSuperclass());
+		}
+
+		return fields;
+	}
 
 	@Id
 	@GeneratedValue
@@ -34,32 +46,62 @@ public abstract class AuditableEntity implements Serializable {
 	@Transient
 	private AuditableEntity savedEntity;
 
-	@PostLoad
-	public void onPostLoad() {
-		logger.debug("postload");
-		savedEntity = SerializationUtils.clone(this);
+	public DifferenceSet<String> detectChanges() {
+		DifferenceType differenceType = DifferenceType.CREATION;
+		if (this.savedEntity != null) {
+			differenceType = DifferenceType.UPDATE;
+		}
+		final DifferenceSet<String> differenceSet = new DifferenceSet<String>(differenceType, this.getClass().getSimpleName());
+		final List<Field> fields = getAllFields(new ArrayList<Field>(), this.getClass());
+		for (final Field field : fields) {
+			if (field.isAnnotationPresent(Auditable.class)) {
+				try {
+					if (field.getModifiers() == Modifier.PRIVATE) {
+						field.setAccessible(true);
+					}
+
+					Difference<Object> difference = null;
+					switch (differenceType) {
+					case CREATION:
+						difference = new Difference<Object>(field.getName(), null, field.get(this));
+						break;
+					case UPDATE:
+						difference = new Difference<Object>(field.getName(), field.get(this.savedEntity), field.get(this));
+						break;
+					}
+
+					differenceSet.add(difference);
+
+				} catch (final Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return differenceSet;
 	}
 
-	@PreUpdate
-	public void onPreUpdate() {
-		logger.debug("preupdate");
-		AuditionTransactionHandler.detectChanges(savedEntity, this);
+	@PostLoad
+	public void onPostLoad() {
+		this.savedEntity = SerializationUtils.clone(this);
 	}
-	
+
+	@PostPersist
+	public void onPostPersist() {
+		AuditionTransactionHandler.handleDetectedCreation(this);
+	}
+
 	@PostUpdate
 	public void onPostUpdate() {
-		logger.debug("postupdate");
+
 	}
 
 	@PrePersist
 	public void onPrePersist() {
-		logger.debug("prepersist");
-	}
-	
-	@PostPersist
-	public void onPostPersist() {
-		logger.debug("postpersist");
-		AuditionTransactionHandler.detectNew(this);
+
 	}
 
+	@PreUpdate
+	public void onPreUpdate() {
+		AuditionTransactionHandler.handleDetectedChanges(this);
+	}
 }

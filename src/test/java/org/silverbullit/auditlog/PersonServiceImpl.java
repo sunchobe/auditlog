@@ -9,35 +9,35 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PersonServiceImpl implements PersonService {
-	
+
 	@Autowired
 	private PersonDao personDao;
-	
-	@Override
-	@AuditionTransaction
-	@Transactional
-	public void updateName(Person person, String firstname, String lastname) {
-		person.setFirstname(firstname);
-		person.setLastname(lastname);		
-		personDao.update(person);
-	}
 
-	@Transactional
 	@Override
-	public void store(Person person) {
-		personDao.persist(person);
+	@Transactional
+	public Person find(final long id) {
+		return this.personDao.find(id);
 	}
 
 	@Transactional
 	@Override
 	public List<Person> findAll() {
-		return personDao.findAll();
+		return this.personDao.findAll();
+	}
+
+	@Transactional
+	@Override
+	public void store(final Person person) {
+		this.personDao.persist(person);
 	}
 
 	@Override
+	@AuditionTransaction
 	@Transactional
-	public Person find(long id) {
-		return personDao.find(id);
+	public void updateName(Person person, final String firstname, final String lastname) {
+		person = this.personDao.find(person.getId());
+		person.setFirstname(firstname);
+		person.setLastname(lastname);
+		this.personDao.update(person);
 	}
-
 }
