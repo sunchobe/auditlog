@@ -18,6 +18,7 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.silverbullit.auditlog.annotation.Auditable;
 
 @MappedSuperclass
 public abstract class AuditableEntity implements Serializable {

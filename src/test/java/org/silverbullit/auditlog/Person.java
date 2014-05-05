@@ -5,6 +5,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 
+import org.silverbullit.auditlog.annotation.Auditable;
+
 @Entity(name = "Person")
 public class Person extends AuditableEntity {
 

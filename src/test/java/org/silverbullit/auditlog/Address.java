@@ -3,6 +3,8 @@ package org.silverbullit.auditlog;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+import org.silverbullit.auditlog.annotation.Auditable;
+
 @Entity
 public class Address extends AuditableEntity {
 
