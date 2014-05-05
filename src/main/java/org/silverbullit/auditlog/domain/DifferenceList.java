@@ -1,4 +1,4 @@
-package org.silverbullit.auditlog;
+package org.silverbullit.auditlog.domain;
 
 import java.util.ArrayList;
 import java.util.Date;

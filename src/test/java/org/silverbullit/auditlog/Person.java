@@ -8,7 +8,7 @@ import javax.persistence.OneToOne;
 import org.silverbullit.auditlog.annotation.Auditable;
 
 @Entity(name = "Person")
-public class Person extends AuditableEntity {
+public class Person extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -24,31 +24,31 @@ public class Person extends AuditableEntity {
 	@OneToOne(cascade = { CascadeType.ALL })
 	private Address address;
 
-	public String getFirstname() {
-		return firstname;
-	}
-
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
-	}
-
-	public String getLastname() {
-		return lastname;
-	}
-
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
-	}
-
 	public Address getAddress() {
-		return address;
+		return this.address;
 	}
 
-	public void setAddress(Address address) {
-		this.address = address;
+	public String getFirstname() {
+		return this.firstname;
 	}
 
 	public long getId() {
-		return id;
+		return this.id;
+	}
+
+	public String getLastname() {
+		return this.lastname;
+	}
+
+	public void setAddress(final Address address) {
+		this.address = address;
+	}
+
+	public void setFirstname(final String firstname) {
+		this.firstname = firstname;
+	}
+
+	public void setLastname(final String lastname) {
+		this.lastname = lastname;
 	}
 }

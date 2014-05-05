@@ -1,4 +1,4 @@
-package org.silverbullit.auditlog;
+package org.silverbullit.auditlog.domain;
 
 public enum DifferenceType {
 
