@@ -5,8 +5,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -15,15 +13,23 @@ import org.silverbullit.auditlog.domain.Difference;
 import org.silverbullit.auditlog.domain.DifferenceList;
 import org.silverbullit.auditlog.domain.DifferenceType;
 
+/**
+ * Handles AuditionTransactions by creating a ThreadLocal
+ * AuditionTransactionContext that keeps track of all detected differences.
+ * 
+ * @author Christian Ober
+ */
 @Aspect
-public class AuditionTransactionHandler {
-
-	private static final Logger logger = LogManager.getLogger(AuditionTransactionHandler.class);
+public abstract class AuditionTransactionHandler {
 
 	private static ThreadLocal<AuditionTransactionContext> auditionTransactionContext;
 
+	/**
+	 * detects differences on the given entity and records them within the context
+	 * 
+	 * @param auditableEntity
+	 */
 	public static void detectAndRecordChanges(final AuditableEntity auditableEntity) {
-
 		final DifferenceList<String> differenceList = detectChanges(auditableEntity);
 		auditionTransactionContext.get().record(differenceList);
 	}
@@ -50,6 +56,8 @@ public class AuditionTransactionHandler {
 					case UPDATE:
 						difference = new Difference<Object>(field.getName(), field.get(auditableEntity.getSavedEntity()), field.get(auditableEntity));
 						break;
+					default:
+						break;
 					}
 
 					differenceList.add(difference);
@@ -62,6 +70,15 @@ public class AuditionTransactionHandler {
 		return differenceList;
 	}
 
+	/**
+	 * Recursively retrieves all available fields for the given class.
+	 * 
+	 * @param fields
+	 *          the fields
+	 * @param type
+	 *          the class to get all fields for (including superclass-fields)
+	 * @return the list of retrieved fields
+	 */
 	private static List<Field> getAllFields(List<Field> fields, final Class<?> type) {
 		for (final Field field : type.getDeclaredFields()) {
 			fields.add(field);
@@ -74,6 +91,17 @@ public class AuditionTransactionHandler {
 		return fields;
 	}
 
+	abstract void handle(List<DifferenceList<String>> collectedDifferences);
+
+	/**
+	 * The pointcut-definition for the interceptor.
+	 * 
+	 * @param joinPoint
+	 *          the reference to the intercepted method
+	 * @return the result of the method (may be null)
+	 * @throws Throwable
+	 *           if any problem occurs
+	 */
 	@Around("@annotation(org.silverbullit.auditlog.annotation.AuditionTransaction)")
 	public Object handleAuditionTransaction(final ProceedingJoinPoint joinPoint) throws Throwable {
 		if (auditionTransactionContext == null) {
@@ -86,10 +114,7 @@ public class AuditionTransactionHandler {
 		try {
 			return joinPoint.proceed();
 		} finally {
-			for (final DifferenceList<String> recordedDifference : auditionTransactionContext.get().getRecordedDifferences()) {
-				logger.info("#####\n" + recordedDifference + "\n#####\n");
-			}
-
+			this.handle(auditionTransactionContext.get().getRecordedDifferences());
 			auditionTransactionContext.get().clear();
 		}
 	}

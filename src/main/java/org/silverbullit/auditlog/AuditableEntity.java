@@ -2,50 +2,52 @@ package org.silverbullit.auditlog;
 
 import java.io.Serializable;
 
-import javax.persistence.MappedSuperclass;
-import javax.persistence.PostLoad;
-import javax.persistence.PostPersist;
-import javax.persistence.PostUpdate;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Transient;
-
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-@MappedSuperclass
+/**
+ * Basic Entity-Class providing the necessary functionality to make changes
+ * detectable.
+ * 
+ * @author Christian Ober
+ */
 public abstract class AuditableEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Transient
+	private static final Logger logger = LogManager.getLogger(AuditableEntity.class);
+
+	/**
+	 * the entity captured directly after loading from the database
+	 */
 	private AuditableEntity savedEntity;
 
+	/**
+	 * detects the available changes and puts them into the context of the
+	 * AuditionTransactionHandler.
+	 */
+	protected void detectAndRecordChanges() {
+		logger.debug("detecting and recording changes");
+		AuditionTransactionHandler.detectAndRecordChanges(this);
+	}
+
+	/**
+	 * retrieves the entity kept directly after loading.
+	 * 
+	 * @return the initially stored entity
+	 */
 	protected AuditableEntity getSavedEntity() {
 		return this.savedEntity;
 	}
 
-	@PostLoad
-	public void onPostLoad() {
+	/**
+	 * keeps the current entity values (should be called directly after loading an
+	 * entity from a data store)
+	 */
+	protected void saveCurrentEntity() {
+		logger.debug("saving current entity");
 		this.savedEntity = SerializationUtils.clone(this);
 	}
 
-	@PostPersist
-	public void onPostPersist() {
-		AuditionTransactionHandler.detectAndRecordChanges(this);
-	}
-
-	@PostUpdate
-	public void onPostUpdate() {
-
-	}
-
-	@PrePersist
-	public void onPrePersist() {
-
-	}
-
-	@PreUpdate
-	public void onPreUpdate() {
-		AuditionTransactionHandler.detectAndRecordChanges(this);
-	}
 }

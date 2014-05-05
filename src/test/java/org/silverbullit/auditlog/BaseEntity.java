@@ -6,7 +6,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
 @MappedSuperclass
-public abstract class BaseEntity extends AuditableEntity {
+public abstract class BaseEntity extends AuditableJpaEntity {
 
 	private static final long serialVersionUID = 1L;
 

@@ -33,6 +33,6 @@
  
 	<aop:aspectj-autoproxy/>
 	
-	<bean id="auditAspect" class="org.silverbullit.auditlog.AuditionTransactionHandler" />
+	<bean id="auditAspect" class="org.silverbullit.auditlog.AuditionTransactionLoggingHandler" />
 	
 </beans>
