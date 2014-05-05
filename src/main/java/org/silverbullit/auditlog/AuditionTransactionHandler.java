@@ -33,7 +33,7 @@ public class AuditionTransactionHandler {
 		if (auditableEntity.getSavedEntity() != null) {
 			differenceType = DifferenceType.UPDATE;
 		}
-		final DifferenceList<String> differenceSet = new DifferenceList<String>(differenceType, auditableEntity.getClass().getSimpleName());
+		final DifferenceList<String> differenceList = new DifferenceList<String>(differenceType, auditableEntity.getClass().getSimpleName());
 		final List<Field> fields = getAllFields(new ArrayList<Field>(), auditableEntity.getClass());
 		for (final Field field : fields) {
 			if (field.isAnnotationPresent(Auditable.class)) {
@@ -52,14 +52,14 @@ public class AuditionTransactionHandler {
 						break;
 					}
 
-					differenceSet.add(difference);
+					differenceList.add(difference);
 
 				} catch (final Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		return differenceSet;
+		return differenceList;
 	}
 
 	private static List<Field> getAllFields(List<Field> fields, final Class<?> type) {

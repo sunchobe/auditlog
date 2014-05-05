@@ -2,24 +2,64 @@ package org.silverbullit.auditlog.domain;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class DifferenceList<T> extends ArrayList<Difference<?>> {
+/**
+ * Container to group a list of differences.
+ * 
+ * @author Christian Ober
+ * 
+ * @param <T>
+ *          the generic type of the identifier usable to group the differences
+ */
+public class DifferenceList<T> {
 
-	private static final long serialVersionUID = 1L;
+	/**
+	 * the inner list of differences
+	 */
+	private final List<Difference<?>> differenceList = new ArrayList<>();
 
+	/**
+	 * the identifier usable to identify the list of differences that belong
+	 * together
+	 */
 	private final T identifier;
 
+	/**
+	 * the date of change/creation
+	 */
 	private final Date changeDate;
 
+	/**
+	 * the type of the difference
+	 */
 	private final DifferenceType differenceType;
 
+	/**
+	 * Creates an object of the class.
+	 * 
+	 * @param differenceType
+	 *          the type of the differences to be grouped in the list
+	 * @param identifier
+	 *          the identifier
+	 */
 	public DifferenceList(final DifferenceType differenceType, final T identifier) {
 		this.changeDate = new Date();
 		this.identifier = identifier;
 		this.differenceType = differenceType;
+	}
+
+	/**
+	 * Adds a Difference to the inner list of Differences.
+	 * 
+	 * @param difference
+	 *          the difference to add
+	 */
+	public void add(final Difference<Object> difference) {
+		this.differenceList.add(difference);
 	}
 
 	public Date getChangeDate() {
@@ -41,7 +81,7 @@ public class DifferenceList<T> extends ArrayList<Difference<?>> {
 		builder.append("identifier", this.identifier);
 		builder.append("changeDate", this.changeDate);
 		builder.append("differenceType", this.differenceType);
-		for (final Difference<?> difference : this) {
+		for (final Difference<?> difference : this.differenceList) {
 			builder.append("difference", difference);
 		}
 
